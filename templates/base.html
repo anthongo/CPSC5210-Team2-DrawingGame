@@ -1,0 +1,176 @@
+<!doctype html>
+<head>
+<title>{% block title %}{% endblock %}</title>
+
+<!-- Pure CSS -->
+<link rel="stylesheet"  href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" 
+integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/grids-responsive-min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  
+
+<!-- JQuery -->
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous">
+</script>
+<script 
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" 
+    crossorigin="anonymous">
+</script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script src="{{url_for('static', filename='wordPool.js')}}"></script>
+
+<!-- Responsive Tags -->
+<script src="{{url_for('static', filename='inputTags.jquery.min.js')}}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='inputTags.min.css')}}"> 
+
+<!-- p5.js -->
+<script src="{{ url_for('static', filename='p5.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+<!-- main stylesheet -->
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+{% macro tag_widget(tag) -%}
+<span>
+  {% if tag['textcat_all'] != '' %}
+    {% for t in tag['textcat_all'].split(",") %}
+    <a class="post-tags hide-link-style" href="{{url_for('search', search_tags=t|string)}}">
+      {{t}}</a>
+    {% endfor %}
+  {% else %}
+    No tags
+  {% endif %}
+</span>
+{%- endmacro %}
+
+{% macro post_widget(post, tag, image, num_comment) -%}
+<div class="post">
+  <div class="post-infobar">
+    <a class="post-title" href="{{url_for('solver_page', post_id=post['post_id'])}}">
+      <span>{{post['title']}}</span>  
+    </a>
+    {% if userinfo and userinfo['user_id'] == post['author'] %}
+      <a href="{{url_for('editing_page', post_id=post['post_id'])}}" class="post-edit-btn">
+      <i class="fa fa-edit"></i></a>
+    {%endif%}
+    <br>
+    <div class="tag-spacing">
+      {{ tag_widget(tag) }}
+    </div>
+  </div>
+  <a href="{{url_for('solver_page', post_id=post['post_id'])}}">
+      <img class="post-img pure-img" src="data:;base64,{{ image }}">
+  </a>
+  <div class="post-footer">
+      <a class="hide-link-style" href="{{url_for('solver_page', post_id=post['post_id'])}}">
+        <i class="fa fa-solid fa-comments"></i>
+        <span>{{num_comment}} comments</span>
+      </a>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro pagination_widget(page_num, final_page) -%}
+<div id="pagination">
+  {% if page_num > 1 %}
+      <a class="arrow" id="prevPageBtn" href="{{  modify_query(page = page_num-1) }}">
+          <i class="fa fa-solid fa-arrow-left"></i>
+      </a>
+  {% endif %}
+  <!-- <div id="pageCenter">Test</div> -->
+  {% if page_num < final_page %}
+      <a class="arrow" id="nextPageBtn" href="{{  modify_query(page = page_num + 1) }}">
+        <i class="fa fa-solid fa-arrow-right "></i>
+      </a>
+  {%endif%}
+</div>
+{%- endmacro %}
+
+<body>
+  <nav>
+    <div class="menu-icon">
+       <span class="fas fa-bars"></span>
+    </div>
+    <div class="logo">
+       Dribbbl
+    </div>
+    <div class="nav-items">
+       <li><a href="{{ url_for('landing_page') }}">Home</a></li>
+       <li><a href="{{ url_for('drawing_page') }}">Create a Drawing</a></li>
+       {% if userinfo and userinfo['name'] %}
+        <li><a href="{{ url_for('profile_page', username=userinfo['name']) }}">
+          <i class="fa fa-solid fa-user"></i> {{userinfo['name']}}</a></li>
+        <li><a class="active"  href="{{ url_for('logout') }}">Logout</a> </li>
+        {% else %}
+        <li><a class="active" href="{{ url_for('login') }}">Login</a></li>
+       {% endif %}
+    </div>
+    <div class="search-icon">
+       <span class="fas fa-search"></span>
+    </div>
+    <div class="cancel-icon">
+       <span class="fas fa-times"></span>
+    </div>
+    
+    <form action="{{ url_for('search') }}"  method="GET">
+      <input type="text" class="search-data" placeholder="Search.." name="search">
+      <select name="search_tags" id="search_tags">
+        <option>all</option>
+      </select>
+      <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+ </nav>
+
+ <script>
+    const menuBtn = document.querySelector(".menu-icon span");
+    const searchBtn = document.querySelector(".search-icon");
+    const cancelBtn = document.querySelector(".cancel-icon");
+    const items = document.querySelector(".nav-items");
+    const form = document.querySelector("form");
+    menuBtn.onclick = ()=>{
+      items.classList.add("active");
+      menuBtn.classList.add("hide");
+      searchBtn.classList.add("hide");
+      cancelBtn.classList.add("show");
+    }
+    cancelBtn.onclick = ()=>{
+      items.classList.remove("active");
+      menuBtn.classList.remove("hide");
+      searchBtn.classList.remove("hide");
+      cancelBtn.classList.remove("show");
+      form.classList.remove("active");
+      cancelBtn.style.color = "#ff3d00";
+    }
+    searchBtn.onclick = ()=>{
+      form.classList.add("active");
+      searchBtn.classList.add("hide");
+      cancelBtn.classList.add("show");
+    }
+
+    let tags = Object.keys(wordPool);
+    tags.forEach(tag => $('#search_tags').append($('<option>', {
+      value: tag,
+      text: tag
+    })));
+
+ </script>
+
+
+
+    <div id="content">
+    {% block content %}
+
+    {% endblock %}
+    </div>
+
+</body>
+
+</html>

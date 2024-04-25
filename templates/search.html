@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %} Dribbbl {% endblock %}
+
+{% block content %}
+
+<div class="search-query">
+    {% if search_query == '' and search_tags == 'all' %}
+        <h1>Showing all posts: </h1>
+    {% elif search_query == '' %}
+        <h1>Searching for all posts from &#8220{{search_tags}}&#8220: </h1>
+    {% elif search_tags == 'all' %}
+        <h1>Searching for &#8220{{search_query}}&#8220 from all categories: </h1>  
+    {% else %}
+        <h1>Searching for &#8220{{search_query}}&#8220 from &#8220{{search_tags}}&#8220: </h1>
+    {% endif %}
+</div>
+
+<div class="post-gallery pure-g">
+    {% for post, tag, image, comment in zip(posts, tags, images, comments) %}
+    <div class="post-container pure-u-1 pure-u-md-1-2 pure-u-lg-1-3" >
+        {{post_widget(post, tag, image, comment)}}
+    </div>
+    {% endfor %}
+</div>
+
+{% if posts|length == 0 %}
+<div class="err404">
+    No posts found.
+</div>
+{% endif %}
+<div class="footer-bar">
+    <div class="page-button">
+        {{pagination_widget(page_num, final_page)}}
+    </div>
+</div>
+
+{% endblock %}

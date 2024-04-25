@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% block title %} Solver {% endblock %} {% block content %}
+<script src="{{
+    url_for('static', filename='solver.js') }}">
+</script>
+
+
+<div class="solver_content">
+    <div class="pure-g">
+        <div class="pure-u-1">
+            <div class="solver_container {{'solved' if post['solved']}}">
+                <div class="solver_author_content">
+                    {% if post['solved'] %}
+                    <div class="solver_solved">
+                        <i class="fa fa-solid fa-check"></i> Solved by {{solver}}
+                    </div>
+                    {% endif %} {% if userinfo and userinfo['user_id'] == post['author'] %}
+                    <a href="{{url_for('editing_page', post_id=post['post_id'])}}" class="post-edit-btn">
+                        <i class="fa fa-edit"></i></a>
+                    {%endif%}
+                    <div class="solver_title">
+                        <h1 class="titleS">{{post['title']}}</h1>
+                    </div>
+                    <div class="solver_picture">
+                        <img class="post-img pure-img" src="{{url_for('view_post', post_id=post['post_id'])}}"> {% if post['hint']%}
+                        <button id="solver_hint_btn" type="button" onclick="hintProvided()">Hint</button>
+                        <div id="dialog-confirm">
+                            <p id="dialog-text">
+                            </p>
+                            <p id="solver_actual_hint">{{post['hint']}}</p>
+                        </div>
+                        {% else %}
+                        <button id="solver_hint_btn" type="button" onclick="noHintProvided()">Hint</button>
+                        <div id="dialog-confirm">
+                            <p id="dialog-text">
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="solver_description_div">
+                        <div class="solver_description_inside_container">
+                            <p>Description: <i>{{post['descrip'] if post['descrip'] else "No description."}}</i></p>
+                            <p>By:
+                                <a class="hide-link-style" href="/user/{{author[0][1]}}">{{author[0][1]}}</a>
+                            </p>
+                            <br>
+                            {{ tag_widget(tags) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="solver_users_content">
+                    <div class="solver_user_input_div">
+                        <form class="pure-form" id="userSolveAns" name="userSolveAns" method="POST">
+                            <fieldset>
+                                <h3 id="toggleComments">
+                                    <i class="fa fa-solid fa-caret-down rotate {{'down' if not post['solved']}}"></i>
+                                    <span>Hide</span> Comments ({{comments|length}})
+                                </h3>
+                                <input type="text" class="pure-input-1 " id="answer" name="answer" placeholder="What do you think it is? {{'Must be logged in to comment.' if not userinfo}}" maxlength="50" pattern="[A-Za-z ]+" {{ 'disabled' if not userinfo}} title="Only letters and spaces allowed"
+                                    required>
+                                <br>
+                                <button type="submit" class="solver_button_success pure-button">
+                                    {{'Submit' if userinfo else 'Login?'}}</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="solver_other_user_answers">
+                        {% if post['show_comment'] %} {% for comment in comments %}
+                        <div class="solver_each_user_all_data" id="solver_each_user_all_data_{{comment['comment_id']}}">
+                            <div class="solver_each_user_profile">
+                                <!-- profile pic -->
+                                <img class="solver_profile_pic" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="profile-pic">
+                            </div>
+                            <div class="solver_each_user_answer_div {{'solved' if comment['content'] == post['solution']}}">
+                                <p class="solver_username"><b>{{comment['username']}}</b></p>
+                                <p class="solver_answer">{{comment['content']}}</p>
+                            </div>
+                            {% if userinfo %} {% if comment['u_id'] == userinfo['user_id'] %} {% if post['solved'] == true and post['solution'] == comment['content']%}
+                            <div class="solver_more_button_div" onclick="comment_more_setting_answer({{comment['comment_id']}})">
+                                <span class="solver_comment_delete_button"><i class="fa fa-solid fa-trash"></i></span>
+                            </div>
+                            {% else %}
+                            <div class="solver_more_button_div" onclick="comment_more_setting({{comment['comment_id']}})">
+                                <span class="solver_comment_delete_button"><i class="fa fa-solid fa-trash"></i></span>
+                            </div>
+                            {%endif%} {%endif%} {%endif%}
+                        </div>
+                        {% else %}
+                        <h1 class="solver_title">No comments yet.</h1>
+                        {% endfor %} {% else %}
+                        <h1 class="solver_title">Comments are hidden by the author.</h1>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var solved = {{ post['solved'] | tojson }}
+    var show_comment = {{ post['show_comment'] | tojson }}
+    setupComments(solved, show_comment);
+</script>
+
+{% endblock %}

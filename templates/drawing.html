@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}
+Make a Drawing!
+{% endblock %}
+
+{% block content %}
+
+<div class="pure-g">
+    <div class="pure-u-1 pure-u-lg-3-5">
+        <div class="drawing-area">
+            <h1 class="drawing-header">Drawing Page</h1>
+            <div class="drawing-canvas" id="canvas-p5-container"></div>
+            <div class="drawing-panel" id="panel-p5-container">
+                <form class="drawing-brush-size pure-form">
+                    
+                    <input type="radio" id="size-1" name="brush-size" value="1"/>
+                    <label for="size-1" class="pure-radio"><i class="fa fa-solid fa-circle"></i></label>
+
+                    <input type="radio" id="size-5" name="brush-size" value="5" /> 
+                    <label for="size-5" class="pure-radio"><i class="fa fa-solid fa-circle"></i></label>
+                    
+                    <input type="radio" id="size-10" name="brush-size" value="10"  checked=""/> 
+                    <label for="size-10" class="pure-radio"><i class="fa fa-solid fa-circle"></i></label>
+
+                    <input type="radio" id="size-30" name="brush-size" value="30" />
+                    <label for="size-30" class="pure-radio"><i class="fa fa-solid fa-circle"></i></label>
+                    
+                    <input type="radio" id="size-50" name="brush-size" value="50" />
+                    <label for="size-50" class="pure-radio"><i class="fa fa-solid fa-circle"></i></label>
+                </form>
+            </div>
+            <form class="drawing-title-form pure-form pure-form-stacked" id="drawing-title-form">
+                <fieldset>
+                    <label for="title">Title</label>
+                    <input id="stacked-drawing-title" name="title" required/>
+                    <label class="label-spacing" for="Description">Description</label>
+                    <textarea id="stacked-drawing-description" name="description" rows="4" cols="22"></textarea>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{
+        url_for('static', filename='sketch.js') }}">
+    </script>
+
+    <div class="pure-u-1 pure-u-lg-2-5">
+      <div class="drawing-settings-box">
+        <form class="drawing-settings-form pure-form pure-form-stacked" id="drawing-settings-form">
+            <fieldset>
+                <legend>Settings</legend>
+                <label for="drawing-tags">Select your tags to receive a word to draw:</label>
+                <p>You can select up to 3 tags, but the word selection depends on the first tag in your list.</p>
+                <input id="stacked-drawing-tags" name="drawing-tags"/>
+                <label class="label-spacing" for="selected-tag">Your word category is:</label>
+                <input id="stacked-selected-tag" name="selected-tag" readonly required/>
+                <div id="drawing-selection">
+                    <label class="label-spacing" for="drawing-select-word">Select the word based on your tags:</label>
+                    <div class="individual-words">
+                        <input type="radio" id="drawing-word-1" name="word-selection" checked="" required/> 
+                        <label for="drawing-word-1" class="pure-radio"></label>
+                    </div>
+                    <div class="individual-words">
+                        <input type="radio" id="drawing-word-2" name="word-selection"/>
+                        <label for="drawing-word-2" class="pure-radio"></label> 
+                    </div>
+                    <div class="individual-words">
+                        <input type="radio" id="drawing-word-3" name="word-selection"/> 
+                        <label for="drawing-word-3" class="pure-radio"></label>
+                    </div>
+                </div>
+                <label class="label-spacing" for="drawing-hint">Add a hint:</label>
+                <input id="stacked-drawing-hint" name="hint"/>
+                <label class="label-spacing" for="drawing-see-guesses" class="pure-checkbox">
+                    <input type="checkbox" id="drawing-see-guesses" name="see-guesses"/> Users can see other people's guesses.
+                </label>
+                <button type="button" class="label-spacing drawing-submit pure-button" 
+                onclick="submitPost()">Submit</button>
+            </fieldset>
+        </form>
+      </div>
+    </div>
+
+    <div id="dialog-confirm">
+        <p id="dialog-text">
+        </p>
+    </div>
+
+    <script>
+        $("#dialog-confirm").hide();
+        var alltags = {{tags|safe}}
+        importTags(alltags);
+    </script>
+</div>
+
+{% endblock %}

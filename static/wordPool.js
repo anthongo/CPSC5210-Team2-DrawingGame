@@ -1,0 +1,30 @@
+let wordPool = {
+    "firearm":['pistol', 'shotgun', 'rifle', 'sniper', 'revolver', 'RPG', 'submachine gun', 'machine gun', 'light machine gun', 'grenade launcher', 'bazooka'],
+    "food":['pizza', 'burger', 'hotdog', 'fries', 'sandwich', 'taco', 'donut', 'pancakes', 'fried chicken', 'muffins', 'noodles', 'ice cream', 'bread', 'kebab', 'ramen', 'pasta'],
+    "star wars":['k-2so', 'darth vader', 'chewbacca', 'bb-8', 'boba fett', 'r2-d2', 'baby yoda', 'yoda', 'storm trooper', 'scout trooper', 'light saber', 'c-3po'],
+    "anime":['naruto', 'bleach', 'one piece', 'attack on titan', 'demon slayer', 'black clover', 'one punch man', 'haikyu', 'my hero academia', 'pokemon', 'fullmetal alchemist'],
+    "building":['hospital', 'church', 'mosque', 'pagoda', 'police station', 'skyscraper', 'factory', 'temple', 'house', 'condo', 'school', 'mall', 'store', 'grocery store'],
+    "accessory":['hat', 'gloves', 'scarf', 'glasses', 'earmuffs', 'watch', 'ring', 'bracelet', 'necklace', 'purse', 'earrings', 'headband', 'sunglasses', 'tie', 'beanie', 'umbrella'],
+    "clothing":['socks', 'sweater', 'shirt', 't-shirt', 'jacket', 'jeans', 'pants', 'skirt', 'dress', 'coat', 'tracksuit', 'hoodie', 'shorts', 'high heels', 'sneakers', 'swimsuit', 'suit'],
+    "job":['fireman', 'policeman', 'scientist', 'engineer', 'nurse', 'doctor', 'musician', 'artist', 'athlete', 'teacher', 'farmer', 'weatherman', 'cashier', 'developer', 'designer', 'lawyer'],
+    "board game":['monopoly', 'jenga', 'connect four', 'risk', 'sorry', 'clue', 'mancala', 'chess', 'checkers', 'operation', 'scrabble', 'battleship', 'uno', 'phase 10'],
+    "bird": ['sparrow','hawk','robin','green heron','duck','eagle','egret','crow','owl','finch','goose','swan', 'parakeet', 'parrot', 'raven', 'pigeon', 'penguin', 'hummingbird', 'falcon', 'vulture', 'seagull', 'pelican'],
+    "weather":['snow','rain','lightning','hail','hurricane','tornado','earthquake','sandstorm','drought','tsunami','flood','storm'],
+    "monster":['ghoul','vampire','zombie','skeleton','lich','goblin','orc','ghost','werewolf','golem','satyr','wisp'],
+    "mammal":['koala','bear','kangaroo','monkey','mouse','squirrel','elephant','donkey','capybara','boar','rabbit','sheep','ferret','fox','wolf','cat','dog'],
+    "tv show":['friends','office','big bang theory','lucifer','squid games','house','how i met your mother','person of interest','the witcher','the arrow','the flash'],
+    "video game":['pokemon','call of duty','mario','super smash bros','the legend of zelda','animal crossing','fire emblem','fortnite','apex legends','skyrim','god of war',
+                 'risk of rain 2','slay the spire','hades','valorant','overwatch','counter-strike','dark souls','monster hunter','minecraft','tetris','wii sports'],
+    "movie":['avengers','mission impossible','fast and furious','insidious','conjuring','anabelle','ready player one','tangled','hercules','frozen','moana','encanto'],
+    "starter pokemon": 
+      ['bulbasaur','ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard', 'squirtle', 'wartortle', 'blastoise',
+      'chikorita','bayleef', 'meganium', 'cyndaquil', 'quilava', 'typhlosion', 'totodile', 'croconaw', 'feraligatr',
+      'treecko','grovyle', 'sceptile', 'torchic', 'combusken', 'blaziken', 'mudkip', 'marshtomp', 'swampert',
+      'turtwig','grotle', 'torterra', 'chimchar', 'monferno', 'infernape', 'piplup', 'prinplup', 'empoleon',
+      'snivy','servine', 'serperior', 'tepig', 'pignite', 'emboar', 'oshawott', 'dewott', 'samurott',
+      'chespin','quilladin', 'chesnaught', 'fennekin', 'braixen', 'delphox', 'froakie', 'frogadier', 'greninja',
+      'rowlet','dartrix', 'decidueye', 'litten', 'torracat', 'incineroar', 'popplio', 'brionne', 'primarina',
+      'grookey','thwackey', 'rillaboom', 'scorbunny', 'raboot', 'cinderace', 'sobble', 'drizzile', 'inteleon',
+      'sprigatito', 'fuecoco', 'quaxly']
+  };
+  
