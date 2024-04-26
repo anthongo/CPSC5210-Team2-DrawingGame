@@ -2,7 +2,7 @@ import json
 import os
 import math
 import re
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote_plus
 import io
 import psycopg2.errors
 from base64 import b64encode
@@ -26,7 +26,7 @@ auth0clientid = os.getenv("client_id")
 auth0clientsecret = os.getenv("client_secret")
 auth0domain = os.getenv("auth0_domain")
 
-auth0 = oauth.register(
+oauth.register(
     'auth0',
     client_id=auth0clientid,
     client_secret=auth0clientsecret,
@@ -36,6 +36,7 @@ auth0 = oauth.register(
     client_kwargs={
         'scope': 'openid profile email',
     },
+    server_metadata_url=f'https://{os.getenv("auth0_domain")}/.well-known/openid-configuration'
 )
 # https://stackoverflow.com/questions/5208252/ziplist1-list2-in-jinja2
 app.jinja_env.globals.update(zip=zip)
@@ -55,11 +56,11 @@ with app.app_context():
 #     app.register_error_handler(404, page_not_found)
 
 ###### AUTH0 functions ######
-@app.route('/callback')
+@app.route("/callback", methods=["GET", "POST"])
 def callback_handling():
     # Handles response from token endpoint
-    auth0.authorize_access_token()
-    resp = auth0.get('userinfo')
+    oauth.auth0.authorize_access_token()
+    resp = oauth.auth0.get('userinfo')
     userinfo = resp.json()
 
     # Store the user information in flask session.
@@ -73,7 +74,8 @@ def callback_handling():
     }
 
     username = db.get_username(userinfo['sub'])
-    if userinfo['http://dribbbl.io/is_new'] or not username: #new user
+    # if userinfo['http://dribbbl.io/is_new'] or not username: #new user
+    if not username: # fix KeyError: 'http://dribbbl.io/is_new'
         db.add_user(userinfo['sub'], userinfo['email'])
         return redirect(url_for("profile_page", username=userinfo['email']))
     else:
@@ -87,7 +89,7 @@ def callback_handling():
 def login():
     if session.get("redirect_to", None) == None: #redirect to previous page if not accessing thru requires_auth
         session['redirect_to'] = request.referrer
-    return auth0.authorize_redirect(redirect_uri=url_for("callback_handling", _external=True))
+    return oauth.auth0.authorize_redirect(redirect_uri=url_for("callback_handling", _external=True))
 
 @app.route('/logout')
 def logout():
@@ -95,7 +97,7 @@ def logout():
     session.clear()
     # Redirect user to logout endpoint
     params = {'returnTo': url_for('landing_page', _external=True), 'client_id': auth0clientid}
-    return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+    return redirect('https://'+auth0domain + '/v2/logout?' + urlencode(params, quote_via=quote_plus))
 
 
 def requires_auth(f):
