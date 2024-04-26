@@ -9,6 +9,7 @@ from base64 import b64encode
 from flask import Flask, render_template, request, g, redirect, url_for, \
     jsonify, send_file, session, flash, abort, current_app
 from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
 from functools import wraps
 
 import db
@@ -16,6 +17,10 @@ import db
 app = Flask(__name__)
 app.secret_key = "can be anything, just random"
 oauth = OAuth(app)
+
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
 
 auth0clientid = os.getenv("client_id")
 auth0clientsecret = os.getenv("client_secret")
@@ -307,3 +312,6 @@ def edit_post(post_id):
     show_comment = request.form.get('see-guesses', None) != None
     db.edit_post(title, desc, hint, show_comment, post_id)
     return redirect(url_for("solver_page", post_id=post_id))
+
+if __name__ == "__main__":
+    app.run(host="localhost", port=5000)
