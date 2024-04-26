@@ -12,6 +12,7 @@ authlib = "*"
 python-dotenv = "*"
 
 [dev-packages]
+colorama = "*"
 
 [requires]
 python_version = "3"

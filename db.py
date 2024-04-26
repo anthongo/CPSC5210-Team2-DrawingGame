@@ -120,6 +120,17 @@ def mark_post_solved(solved, post_id):
 ## TAGS
 def get_tags(post_ids=[]):
     with get_db_cursor() as cur:
+        cur.execute("""
+            DO $$ BEGIN
+            CREATE AGGREGATE textcat_all(
+            basetype    = text,
+            sfunc       = textcat,
+            stype       = text,
+            initcond    = ''
+            );
+            EXCEPTION WHEN duplicate_function THEN NULL;
+            END $$;
+            """)
         if post_ids == []:
             cur.execute("""
                 SELECT post_id, title, textcat_all(tag_name || ',') 

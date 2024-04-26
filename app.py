@@ -39,11 +39,15 @@ app.jinja_env.globals.update(zip=zip)
 def page_not_found(e):
     return render_template('404.html', userinfo=session['profile']), 404
 
-@app.before_first_request
-def initialize():
+with app.app_context():
     db.setup()
     app.register_error_handler(404, page_not_found)
 
+# removed in Flask 2.3
+# @app.before_first_request
+# def initialize():
+#     db.setup()
+#     app.register_error_handler(404, page_not_found)
 
 ###### AUTH0 functions ######
 @app.route('/callback')
