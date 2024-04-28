@@ -156,6 +156,18 @@ def get_tags(post_ids=[]):
 
 def get_tag(post_id):
     with get_db_cursor() as cur:
+        cur.execute("""
+            DO $$ BEGIN
+            CREATE AGGREGATE textcat_all(
+            basetype    = text,
+            sfunc       = textcat,
+            stype       = text,
+            initcond    = ''
+            );
+            EXCEPTION WHEN duplicate_function THEN NULL;
+            END $$;
+            """)
+
         # This is kinda bad, definitely optimize this by adding WHERE clause deeper in query
         cur.execute("""SELECT post_id, textcat_all(tag_name || ',') 
             FROM(
