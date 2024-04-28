@@ -44,7 +44,7 @@ def create_app():
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('404.html', userinfo=session['profile']), 404
+        return render_template('404.html'), 404
 
     with app.app_context():
         db.setup()
@@ -316,6 +316,7 @@ def create_app():
         db.edit_post(title, desc, hint, show_comment, post_id)
         return redirect(url_for("solver_page", post_id=post_id))
 
+    app.db = db
     return app
 
 if __name__ == "__main__":
