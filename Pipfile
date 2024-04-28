@@ -14,6 +14,7 @@ python-dotenv = "*"
 [dev-packages]
 colorama = "*"
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3"
