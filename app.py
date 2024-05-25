@@ -276,7 +276,7 @@ def create_app():
     def view_post(post_id):
         post_row = db.get_post(post_id)
         stream = io.BytesIO(post_row["post_image"])
-        return send_file(stream, attachment_filename=post_row["title"])
+        return send_file(stream, download_name=post_row["title"])
 
 
     @app.route('/drawing')
