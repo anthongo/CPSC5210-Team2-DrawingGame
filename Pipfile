@@ -15,6 +15,9 @@ python-dotenv = "*"
 colorama = "*"
 pytest = "*"
 pytest-cov = "*"
+mockito = "*"
+selenium = "*"
+chromedriver-py = "*"
 
 [requires]
 python_version = "3"

@@ -1,7 +1,5 @@
 {
   "python.testing.pytestArgs": [
-    ".",
-    "--ignore=Lib",
     "--cov=app",
     "--cov-report=html"
   ],

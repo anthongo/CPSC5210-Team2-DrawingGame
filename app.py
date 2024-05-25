@@ -26,6 +26,9 @@ def create_app():
     auth0clientid = os.getenv("client_id")
     auth0clientsecret = os.getenv("client_secret")
     auth0domain = os.getenv("auth0_domain")
+    app.auth0clientid = auth0clientid
+    app.auth0clientsecret = auth0clientsecret
+    app.auth0domain = auth0domain
 
     oauth.register(
         'auth0',
@@ -316,7 +319,6 @@ def create_app():
         db.edit_post(title, desc, hint, show_comment, post_id)
         return redirect(url_for("solver_page", post_id=post_id))
 
-    app.db = db
     return app
 
 if __name__ == "__main__":
