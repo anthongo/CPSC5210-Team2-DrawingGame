@@ -44,6 +44,7 @@ def create_app():
     )
     # https://stackoverflow.com/questions/5208252/ziplist1-list2-in-jinja2
     app.jinja_env.globals.update(zip=zip)
+    app.auth0 = oauth.auth0
 
     @app.errorhandler(404)
     def page_not_found(e):
