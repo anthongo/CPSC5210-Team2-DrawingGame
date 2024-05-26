@@ -1,41 +1,9 @@
 import pytest
-import os
-from app import create_app, db
+from app import db
 from flask import render_template, url_for, Flask
-from flask.testing import FlaskClient
-from selenium.webdriver import ChromeOptions, ChromeService, Chrome
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from chromedriver_py import binary_path
 from html.parser import HTMLParser
 from urllib.parse import urlencode, quote_plus
-from time import sleep
-
-@pytest.fixture()
-def app():
-  app = create_app()
-  return app
-
-@pytest.fixture()
-def client(app):
-  return app.test_client()
-
-@pytest.fixture()
-def driver():
-  svc = ChromeService(executable_path=binary_path)
-  options = ChromeOptions()
-  options.add_argument("--start-maximized")
-  driver = Chrome(options=options, service=svc)
-  return driver
-
-@pytest.fixture()
-def driver_wait(driver):
-  return WebDriverWait(driver, 30)
-
-@pytest.fixture()
-def auth0(app):
-  return app.auth0
+from flask.testing import FlaskClient
 
 def test_get_drawing(app, client):
   with client.session_transaction() as session:
@@ -79,7 +47,7 @@ def test_valid_profile_page(client):
 def test_invalid_editing_page(client):
   with client.session_transaction() as session:
     session['profile'] = {}
-  response = client.get("/post/100/edit")
+  response = client.get("/post/1000/edit")
   assert response.status_code == 404
 
 def test_page_not_found(app, client):
@@ -91,31 +59,15 @@ def test_page_not_found(app, client):
     #assert response == render_template('404.html', userinfo=session['profile'])
     assert response.status_code == 404
 
-def test_login(client, driver: Chrome, driver_wait):
-  try:
-    driver.get("http://localhost:5000")
-    login = driver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//a[text()="Login"]')))
-    login.click()
-
-    # wait for username to appear
-    driver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'username')))
-    expected_title = driver.title
-
-    # get form sent to browser
-    data = client.get("/login").get_data(as_text=True)
-
-    class Parser(HTMLParser):
-      def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if (tag == 'a'):
-          _, link = attrs[0]
-          driver.get(link)
-          
-          driver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'username')))
-          assert driver.title == expected_title
-    parser = Parser()
-    parser.feed(data)
-  finally:
-    driver.quit()
+def test_login(client: FlaskClient, app: Flask):
+  data = client.get("/login").get_data(as_text=True)
+  class Parser(HTMLParser):
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+      if (tag == 'a'):
+        _, link = attrs[0]
+        assert link.startswith(f"https://{app.auth0domain}/authorize?response_type=code&client_id={app.auth0clientid}")
+  parser = Parser()
+  parser.feed(data)
 
 def test_logout(client: FlaskClient, app: Flask):
   data = client.get("/logout").get_data(as_text=True)
@@ -132,9 +84,38 @@ def test_logout(client: FlaskClient, app: Flask):
   parser = Parser()
   parser.feed(data)
 
-def test_view_post(driver: Chrome):
-  try:
-    driver.get("http://localhost:5000")
-    sleep(5)
-  finally:
-    driver.quit()
+def test_update_username(client: FlaskClient, app: Flask):
+  username = "test@example.com"
+
+  with client.session_transaction() as session:
+    session['profile'] = {
+      "user_id": ""
+    }
+  response = client.post(f"/user/{username}")
+  assert response.status_code == 401
+
+  with client.session_transaction() as session:
+    session["profile"] = {
+      "user_id": "auth0|662b504a5dea8e9dfd414e67",
+    }
+  data = {
+    "username": " %20 "
+  }
+  response = client.post(f"/user/{username}", data=data)
+  assert response.status_code == 400
+
+  with client.session_transaction() as session:
+    session["profile"] = {
+      "user_id": "auth0|662b504a5dea8e9dfd414e67",
+      "name": "test@example.com",
+      "modified": False
+    }
+  data = {
+    "username": "test"
+  }
+  response = client.post(f"/user/{username}", data=data)
+  assert session.modified == True
+  assert db.get_username("auth0|662b504a5dea8e9dfd414e67") == "test"
+
+  with app.app_context(): # reset
+    db.edit_username("auth0|662b504a5dea8e9dfd414e67", "test@example.com")

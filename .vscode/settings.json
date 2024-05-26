@@ -1,6 +1,7 @@
 {
   "python.testing.pytestArgs": [
     "--cov=app",
+    "--cov=db",
     "--cov-report=html"
   ],
   "python.testing.unittestEnabled": false,
