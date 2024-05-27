@@ -56,3 +56,8 @@ jobs:
       uses: actions/setup-node@v4.0.2
     - name: Setup node
       run: npm ci
+    - name: Start app.py
+      run: pipenv run python app.py
+    - name: Run pytest and send email
+      run: |
+        pipenv run pytest --cov=app --cov=db --cov-report=term
