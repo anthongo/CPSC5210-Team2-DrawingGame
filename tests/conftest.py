@@ -1,5 +1,6 @@
 import pytest
-from app import create_app, db
+import os
+from app import create_app
 from selenium.webdriver import ChromeOptions, ChromeService, Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -24,6 +25,10 @@ def sample_post(request):
   svc = ChromeService(executable_path=binary_path)
   options = ChromeOptions()
   options.add_argument("--start-maximized")
+  if os.environ["HEADLESS"] == "true":
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--headless")
   driver = Chrome(options=options, service=svc)
   driver_wait = WebDriverWait(driver, 30)
 
