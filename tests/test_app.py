@@ -119,3 +119,9 @@ def test_update_username(client: FlaskClient, app: Flask):
 
   with app.app_context(): # reset
     db.edit_username("auth0|662b504a5dea8e9dfd414e67", "test@example.com")
+
+def test_invalid_solver_page(client):
+  with client.session_transaction() as session:
+    session['profile'] = {}
+  response = client.get("/post/1000")
+  assert response.status_code == 404
