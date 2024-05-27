@@ -57,6 +57,9 @@ def sample_post(request):
     option = driver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//li[text()="firearm"]')))
     option.click()
 
+    drawing_word = driver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'label[for="drawing-word-1"]')))
+    request.cls.post_solution = drawing_word.text.lower().strip()
+
     submit_button = driver_wait.until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "drawing-submit")))
     submit_button.click()
 
@@ -68,10 +71,10 @@ def sample_post(request):
     
     # wait until post is uploaded
     title = driver_wait.until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "titleS")))
+    request.cls.post_title = title.text
     
     id = int(driver.current_url.split('/')[-1])
     request.cls.post_id = id
-    request.cls.post_title = title.text
     
     request.cls.client = app.test_client()
     request.cls.driver = driver

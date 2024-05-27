@@ -1,19 +1,19 @@
 import pytest
 import io
 from app import db
-from flask import Flask, url_for
 from flask.testing import FlaskClient
-from selenium.webdriver import ChromeOptions, ChromeService, Chrome
-from selenium.webdriver.common.by import By
+from selenium.webdriver import Chrome
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
-from chromedriver_py import binary_path
-from html.parser import HTMLParser
-from urllib.parse import urlencode, quote_plus
-from time import sleep
 
 @pytest.mark.usefixtures("sample_post")
 class TestPost:
+  client: FlaskClient
+  driver: Chrome
+  driver_wait: WebDriverWait
+  post_id: int
+  post_title: str
+  post_solution: str
+
   def test_view_post(self):
     response = self.client.get(f"/images/{self.post_id}")
     assert response.status_code == 200
