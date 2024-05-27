@@ -46,10 +46,8 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11"
-        cache: "pipenv"
     - name: Setup pipenv
       run: |
-        python -m pip install --upgrade pip
         pip install pipenv
         pipenv install --deploy
         pipenv install --dev --deploy
@@ -62,3 +60,5 @@ jobs:
     - name: Run pytest and send email
       run: |
         pipenv run pytest --cov=app --cov=db --cov-report=term
+      env:
+        HEADLESS: true
