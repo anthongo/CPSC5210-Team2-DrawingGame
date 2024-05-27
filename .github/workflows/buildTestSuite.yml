@@ -14,12 +14,6 @@ env:
   auth0_domain: dev-ahjkm0k5e1e7ik74.us.auth0.com
   client_id: SHtECfwsr1cV0DznVVyoValV7QBkxAbf
   client_secret: hClEGpfL_qxQz2ZAP6Ss2hZHMifHMkwkDjYv30pcFEjlqdq2ruuQXBNDCQABnqBp
-  
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_DB: dribbbl
-  POSTGRES_HOST: localhost
-  POSTGRES_PORT: 5432
 
 permissions:
   contents: read
@@ -35,13 +29,19 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: dribbbl
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
         ports:
           - 5432:5432
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Populate database
-      run: PGPASSWORD=$POSTGRES_PASSWORD psql -d $POSTGRES_DB -h $POSTGRES_HOST -U $POSTGRES_USER -f schema.sql
+      run: PGPASSWORD=postgres psql -d dribbbl -h localhost -U postgres -f schema.sql
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
