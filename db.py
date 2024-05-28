@@ -211,7 +211,11 @@ def get_posts_by_author(u_id):
     with get_db_cursor() as cur:
         cur.execute("""SELECT * FROM posts WHERE author = %s ORDER BY upload_time DESC""", (u_id,))
         return cur.fetchall()
-
+def get_max_post_ids():
+    with get_db_cursor() as cur:
+        cur.execute("SELECT MAX(post_id) FROM posts;")
+        result = cur.fetchone()
+        return result[0] if result else None
 ## COMMENTS
 def add_comment(post_id, author, content):
     with get_db_cursor(True) as cur:
