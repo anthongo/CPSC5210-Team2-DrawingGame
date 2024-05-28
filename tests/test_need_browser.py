@@ -74,6 +74,8 @@ class TestPost:
     assert post["solved"] == False
     assert response.status_code == 302
 
+  
+
   def test_delete_comment_success(self):
     post = db.get_post(self.post_id)
     with self.client.session_transaction() as session:
@@ -81,7 +83,7 @@ class TestPost:
         "user_id": "auth0|662b504a5dea8e9dfd414e67",
         "name": "test@example.com"
       }
-    commentID = db.get_latest_comment_id()-1
+    commentID = db.get_latest_comment_id()
     data = {
          "comment_id": commentID
      }
@@ -101,6 +103,7 @@ class TestPost:
      }
     response = self.client.post('/post/deleteComment/', data=data)
     assert response.data.decode() == "Fail"
+
   def test_add_solved_comment(self):
     post = db.get_post(self.post_id)
     with self.client.session_transaction() as session:
@@ -117,7 +120,7 @@ class TestPost:
     
     assert post["solved"] == True
     assert response.status_code == 302
-    
+
   def test_edit_post(self):
     post = db.get_post(self.post_id)
 
