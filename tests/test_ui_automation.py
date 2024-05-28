@@ -135,9 +135,6 @@ def test_second_user_add_comment_and_get_it_solved(driver):
         button.click()
         break
 
-    webDriver.get('http://localhost:5000')
-    webDriver.refresh()
-
     take_screenshot(webDriver, "Created Guess Quiz")
 
     logout = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//a[text()="Logout"]')))
