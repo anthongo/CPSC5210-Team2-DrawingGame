@@ -125,3 +125,28 @@ def test_invalid_solver_page(client):
     session['profile'] = {}
   response = client.get("/post/1000")
   assert response.status_code == 404
+
+def test_valid_nonSolved_solver_page(client):
+    with client.session_transaction() as session:
+      session["profile"] = {
+        "user_id": "auth0|662b504a5dea8e9dfd414e67",
+        "name": "test@example.com"
+      }
+
+    postID = db.get_max_post_ids()-1
+    response = client.get(f"/post/{postID}")
+    post = db.get_post(postID)
+    assert post['solved'] == False
+
+def test_valid_Solved_solver_page(client):
+    with client.session_transaction() as session:
+      session["profile"] = {
+        "user_id": "auth0|662b504a5dea8e9dfd414e67",
+        "name": "test@example.com"
+      }
+
+    postID = db.get_max_post_ids() - 2
+    print(f"postID: {postID}")
+    response = client.get(f"/post/{postID}")
+    post = db.get_post(postID)
+    assert post['solved'] == True
