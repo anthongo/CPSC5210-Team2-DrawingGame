@@ -50,7 +50,7 @@ def test_create_drawing(driver):
     webDriver.execute_script("setup()")
 
     title_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'stacked-drawing-title')))
-    title_input.send_keys('Test Drawing')
+    title_input.send_keys('Test New Drawing')
 
     description_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'stacked-drawing-description')))
     description_input.send_keys('Test New Drawing Description')
@@ -102,7 +102,7 @@ def test_add_comment(driver):
     continue_button = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'button.c91192a5a.c50deed59.cdb4306d0.c9ec81755.c18d716b8')))
     continue_button.click()
 
-    post = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//span[text()="Test Drawing"]')))
+    post = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//span[text()="Comment me"]')))
     post.click()
 
     take_screenshot(webDriver, "Post")
