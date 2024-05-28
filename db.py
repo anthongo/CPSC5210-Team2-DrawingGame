@@ -241,7 +241,12 @@ def get_comment_counts(post_ids):
             GROUP BY posts.post_id ORDER BY posts.upload_time DESC""", 
             (post_ids, ))
         return [c[0] for c in cur.fetchall()]
-
+    
+def get_latest_comment_id():
+    with get_db_cursor() as cur:
+        cur.execute("SELECT comment_id FROM comments ORDER BY comment_id DESC LIMIT 1")
+        result = cur.fetchone()
+        return result[0] if result else None
 # SEARCH 
         
 def get_search(query, tags='all'):
