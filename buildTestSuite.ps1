@@ -14,9 +14,8 @@ try {
 scoop install git
 
 scoop install postgresql
-$Env:PGPASSWORD = postgres
-createdb -h localhost -p 5432 -U postgres dribbbl
-psql -d dribbbl -h localhost -U postgres -f schema.sql
+$Env:PGPASSWORD = "postgres"; createdb -h localhost -p 5432 -U postgres dribbbl
+$Env:PGPASSWORD = "postgres"; psql -d dribbbl -h localhost -U postgres -f schema.sql
 
 scoop install python
 pip install pipenv
