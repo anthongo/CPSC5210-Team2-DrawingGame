@@ -1,6 +1,4 @@
 import pytest
-import os
-from app import create_app
 from selenium.webdriver import ChromeOptions, ChromeService, Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,29 +6,17 @@ from selenium.webdriver.support import expected_conditions
 from chromedriver_py import binary_path
 
 @pytest.fixture()
-def app():
-  app = create_app()
-  return app
-
-@pytest.fixture()
-def client(app):
-  return app.test_client()
-
-@pytest.fixture()
-def auth0(app):
-  return app.auth0
-
-@pytest.fixture(scope='class')
-def sample_post(request):
+def driver():
   svc = ChromeService(executable_path=binary_path)
   options = ChromeOptions()
   options.add_argument("--start-maximized")
-  driver = Chrome(options=options, service=svc)
-  driver_wait = WebDriverWait(driver, 30)
+  return Chrome(options=options, service=svc)
 
-  # independent app
-  app = create_app()
+@pytest.fixture()
+def driver_wait(driver: Chrome):
+  return WebDriverWait(driver, 30)
 
+def create_drawing(driver: Chrome, driver_wait: WebDriverWait):
   try:
     driver.get('http://localhost:5000')
 
@@ -58,8 +44,8 @@ def sample_post(request):
     option = driver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//li[text()="firearm"]')))
     option.click()
 
-    drawing_word = driver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'label[for="drawing-word-1"]')))
-    request.cls.post_solution = drawing_word.text.lower().strip()
+    # wait until drawing word is loaded
+    driver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'label[for="drawing-word-1"]')))
 
     submit_button = driver_wait.until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "drawing-submit")))
     submit_button.click()
@@ -71,15 +57,7 @@ def sample_post(request):
         break
     
     # wait until post is uploaded
-    title = driver_wait.until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "titleS")))
-    request.cls.post_title = title.text
-    
-    id = int(driver.current_url.split('/')[-1])
-    request.cls.post_id = id
-    
-    request.cls.client = app.test_client()
-    request.cls.driver = driver
-    request.cls.driver_wait = driver_wait
+    driver_wait.until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "titleS")))
     
   finally:
     driver.quit()
