@@ -30,7 +30,7 @@ npm install --dev
 # start app
 $app = Start-Job { pipenv run python app.py }
 
-pipenv run pytest .\tests\test_app.py --cov=app --cov=db --cov-report=term
+pipenv run pytest --cov=app --cov=db --cov-report=term
 
 # stop app
 Stop-Job $app
