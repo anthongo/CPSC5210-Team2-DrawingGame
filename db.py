@@ -90,10 +90,10 @@ def upload_post(data, title, desc, hint, show_comment, sol, u_id):
             (title, data, desc, hint, show_comment, sol, u_id))
         return cur.fetchone()[0] #postid
 
-def get_image_ids():
-    with get_db_cursor() as cur:
-        cur.execute("select post_id from posts;")
-        return [r['post_id'] for r in cur]
+# def get_image_ids():
+#     with get_db_cursor() as cur:
+#         cur.execute("select post_id from posts;")
+#         return [r['post_id'] for r in cur]
 
 def edit_post(title, desc, hint, show_comment, post_id):
     with get_db_cursor(True) as cur:
@@ -192,7 +192,7 @@ def tag_post(tags, post_id):
 
 
 ## VIEWING MULTIPLE POSTS
-def get_total_post_ids():
+#def get_total_post_ids():
     with get_db_cursor() as cur:
         cur.execute("SELECT MAX(post_id) from posts;")
         return cur.fetchall()
@@ -261,14 +261,15 @@ def get_search(query, tags='all'):
             WHERE title @@ to_tsquery(%s) OR descrip @@ to_tsquery(%s)
             order by upload_time DESC""", (query, query))
         else:
+            tags_list = tags.split(',')
             cur.execute("""SELECT p.* 
             FROM posts p, tags t, tagged tp
             WHERE tp.tag = t.tag_id
             AND (p.title @@ to_tsquery(%s) OR p.descrip @@ to_tsquery(%s))
-            AND t.tag_name = (%s)
+            AND t.tag_name = ANY(%s)
             AND p.post_id = tp.post
             GROUP BY p.post_id
-            ORDER BY upload_time DESC""", (query, query, tags,))
+            ORDER BY upload_time DESC""", (query, query, tags_list,))
             #current_app.logger.info(f"searching by tags: " + str(tags))
         return cur.fetchall()
 
@@ -281,7 +282,7 @@ def get_search_tag_only(tags=[]):
             cur.execute("""SELECT p.* 
             FROM posts p, tags t, tagged tp
             WHERE tp.tag = t.tag_id
-            AND t.tag_name = (%s)
+            AND t.tag_name = ANY (%s)
             AND p.post_id = tp.post
             GROUP BY p.post_id
             ORDER BY upload_time DESC""", (tags,))
