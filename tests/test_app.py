@@ -5,6 +5,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlencode, quote_plus
 from flask.testing import FlaskClient
 
+
 def test_get_drawing(app, client):
   with client.session_transaction() as session:
     session['profile'] = {}
@@ -151,7 +152,7 @@ def test_valid_nonSolved_solver_page(client):
 #     post = db.get_post(postID)
 #     assert post['solved'] == True
 
-def test_search_empty(client):
+def test_searchEmpty_tagAll(client):
   with client.session_transaction() as session:
       session["profile"] = {
         "user_id": "auth0|662b504a5dea8e9dfd414e67",
@@ -160,7 +161,7 @@ def test_search_empty(client):
   response = client.get('/search?search=&search_tags=all&page=1')
   assert response.status_code == 200
 
-def test_search_tag_all(client):
+def test_searchTest_tagAll(client):
   with client.session_transaction() as session:
       session["profile"] = {
         "user_id": "auth0|662b504a5dea8e9dfd414e67",
@@ -169,7 +170,7 @@ def test_search_tag_all(client):
   response = client.get('/search?search=test&search_tags=all&page=1')
   assert response.status_code == 200
 
-def test_search_tag_only(client):
+def test_searchEmpty_tagFireArm(client):
   with client.session_transaction() as session:
       session["profile"] = {
         "user_id": "auth0|662b504a5dea8e9dfd414e67",
@@ -177,3 +178,23 @@ def test_search_tag_only(client):
       }
   response = client.get('/search?search=&search_tags=firearm&page=1')
   assert response.status_code == 200
+
+def test_searchTest_tagFireArm(client):
+  with client.session_transaction() as session:
+      session["profile"] = {
+        "user_id": "auth0|662b504a5dea8e9dfd414e67",
+        "name": "test@example.com"
+      }
+  response = client.get('/search?search=test&search_tags=firearm&page=1')
+  print(response.data)
+  assert response.status_code == 200
+
+def test_searchEmpty_tagEmpty(client):
+  with client.session_transaction() as session:
+      session["profile"] = {
+        "user_id": "auth0|662b504a5dea8e9dfd414e67",
+        "name": "test@example.com"
+      }
+  response = client.get('/search?search=&search_tags=&page=1')
+  assert response.status_code == 200
+
