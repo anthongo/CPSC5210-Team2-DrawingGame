@@ -198,3 +198,18 @@ def test_searchEmpty_tagEmpty(client):
   response = client.get('/search?search=&search_tags=&page=1')
   assert response.status_code == 200
 
+#MUTANT TEST (TO ENSURE THAT IT SHOWS THE SEARCHED POST PROPERLY)
+def test_final_page_calculation(client):
+    with client.session_transaction() as session:
+        session["profile"] = {
+            "user_id": "auth0|662b504a5dea8e9dfd414e67",
+            "name": "test@example.com"
+        }
+    response = client.get('/search?search=pagecalculation_test&search_tags=all&page=1')
+    print(response.data)
+    assert response.status_code == 200
+    assert b'No posts found' not in response.data
+
+
+    
+
