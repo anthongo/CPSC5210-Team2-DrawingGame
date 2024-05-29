@@ -72,7 +72,7 @@ def edit_username(user_id, username):
 def get_posts(page = 1, post_per_page = 12):
     ''' note -- result can be used as list of dictionaries'''
     limit = post_per_page
-    offset = (page-1)*post_per_page
+    offset = (page-1)*post_per_page #MUTANT 2 (Changing * to -)
     with get_db_cursor() as cur:
         cur.execute("select * from posts order by upload_time DESC limit %s offset %s", (limit, offset))
         return cur.fetchall()
