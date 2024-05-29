@@ -86,7 +86,7 @@ def test_create_drawing(driver):
 
     assert actual_title == 'Test New Drawing'
 
-def test_add_comment(driver):
+def test_second_user_add_comment_and_get_it_solved(driver):
     webDriver, webDriver_wait = driver
     webDriver.get('http://localhost:5000')
 
@@ -102,30 +102,79 @@ def test_add_comment(driver):
     continue_button = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'button.c91192a5a.c50deed59.cdb4306d0.c9ec81755.c18d716b8')))
     continue_button.click()
 
-    post = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//span[text()="Comment me"]')))
+    createadrwainglink = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//a[text()="Create a Drawing"]')))
+    createadrwainglink.click()
+
+    webDriver.execute_script("setup()")
+
+    title_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'stacked-drawing-title')))
+    title_input.send_keys('Guess game by selenium')
+
+    description_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'stacked-drawing-description')))
+    description_input.send_keys('Guess the word')
+
+    tag_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//input[@class="inputTags-field"]')))
+    tag_input.send_keys('firearm')
+
+    option = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//li[text()="firearm"]')))
+    option.click()
+    
+    hint_input = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'stacked-drawing-hint')))
+    hint_input.click()
+    hint_input.send_keys('Test New Hint')
+
+    drawing_word = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//label[@for="drawing-word-1"]')))
+    answer = drawing_word.text
+
+    submit = webDriver_wait.until(expected_conditions.element_to_be_clickable((By.XPATH, '//button[@class="label-spacing drawing-submit pure-button"]')))
+    submit.click()
+
+    submit_buttons = webDriver_wait.until(expected_conditions.visibility_of_all_elements_located((By.XPATH, '//button[text()="Submit"]')))
+    for button in submit_buttons:
+      if "ui-button" in button.get_attribute("class"):
+        button.click()
+        break
+
+    take_screenshot(webDriver, "Created Guess Quiz")
+
+    logout = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//a[text()="Logout"]')))
+    logout.click()
+
+    second_login = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//a[text()="Login"]')))
+    second_login.click()
+
+    enter_user_two_email = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'username')))
+    enter_user_two_email.send_keys('test2@example.com')
+
+    enter_user_two_password = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'password')))
+    enter_user_two_password.send_keys('Test123-')
+
+    login_button = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'button.c91192a5a.c50deed59.cdb4306d0.c9ec81755.c18d716b8')))
+    login_button.click()
+
+    take_screenshot(webDriver, "Second User Login")
+
+    post = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//span[text()="Guess game by selenium"]')))
     post.click()
 
     take_screenshot(webDriver, "Post")
 
     comment_text = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.ID, 'answer')))
-    comment_text.send_keys('this is done by selenium good job')
+    comment_text.send_keys(answer)
 
     take_screenshot(webDriver, "Comment")
 
     submitComment = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, 'button.solver_button_success')))
     submitComment.click()
 
-    readComment = webDriver_wait.until(expected_conditions.presence_of_element_located((By.XPATH, '//p[@class="solver_answer"]')))
-    comment = readComment.text
+    take_screenshot(webDriver, "Comment Solved")
 
-    actions = ActionChains(webDriver)
-    actions.move_to_element(readComment).perform()
-
-    take_screenshot(webDriver, "Comment Match")
+    check_solved = webDriver_wait.until(expected_conditions.visibility_of_element_located((By.XPATH, '//div[@class="solver_solved"]')))
+    solved = check_solved.text
 
     webDriver.quit()
 
-    assert comment == 'this is done by selenium good job'
+    assert solved == 'Solved by test2@example.com'
 
 def test_edit_post(driver):
     webDriver, webDriver_wait = driver
