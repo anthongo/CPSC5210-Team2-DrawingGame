@@ -1,5 +1,6 @@
 param (
   [Parameter(Mandatory=$true)][string]$smtpserver,
+  [Parameter(Mandatory=$true)][int]$smtpport,
   [Parameter(Mandatory=$true)][string]$from,
   [Parameter(Mandatory=$true)][string]$to
 )
@@ -41,5 +42,4 @@ $results = (pipenv run pytest --cov=app --cov=db --cov-report=term)
 Stop-Job $app
 Remove-Job $app
 
-$cred = (Get-Credential)
-Send-MailMessage -SmtpServer $smtpserver -Port 587 -Credential $cred -UseSsl "STARTTLS" -From $from -To $to -Subject "Test Results" -Body $results
+Send-MailMessage -SmtpServer $smtpserver -Port $smtpport -From $from -To $to -Subject "Test Results" -Body $results
