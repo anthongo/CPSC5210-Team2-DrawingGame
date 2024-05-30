@@ -1,3 +1,9 @@
+param (
+  [Parameter(Mandatory=$true)][string]$smtpserver,
+  [Parameter(Mandatory=$true)][string]$from,
+  [Parameter(Mandatory=$true)][string]$to
+)
+
 $Env:DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/dribbbl"
 $Env:auth0_domain = "dev-ahjkm0k5e1e7ik74.us.auth0.com"
 $Env:client_id = "SHtECfwsr1cV0DznVVyoValV7QBkxAbf"
@@ -29,8 +35,11 @@ npm install --dev
 # start app
 $app = Start-Job { pipenv run python app.py }
 
-pipenv run pytest --cov=app --cov=db --cov-report=term
+$results = (pipenv run pytest --cov=app --cov=db --cov-report=term)
 
 # stop app
 Stop-Job $app
 Remove-Job $app
+
+$cred = (Get-Credential)
+Send-MailMessage -SmtpServer $smtpserver -Port 587 -Credential $cred -UseSsl "STARTTLS" -From $from -To $to -Subject "Test Results" -Body $results
