@@ -196,7 +196,7 @@ def create_app():
         if search_query != '':  # regular search
             posts = db.get_search(search_query+":*", search_tags)
             final_page = math.ceil(len(posts) / 12)
-            posts = posts[(page-1)*12: page*12] #MUTANT 1 (Chaning - to +)
+            posts = posts[(page-1)*12: page*12] #MUTANT 1 (Changing - to +)
         elif search_tags != 'all':  # tag only search 
             posts = db.get_search_tag_only(search_tags.split(',') if search_tags else [])
             final_page = math.ceil(len(posts) / 12)
