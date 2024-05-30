@@ -210,6 +210,8 @@ def test_final_page_calculation(client):
     assert response.status_code == 200
     assert b'No posts found' not in response.data
 
-
-    
-
+def test_db_add_user(app: Flask):
+  with app.app_context():
+    db.add_user("auth0|da3f7d07e42942258b21d29d", "fake@example.com")
+    assert db.get_username("auth0|da3f7d07e42942258b21d29d") == "fake@example.com"
+    assert db.get_uid("fake@example.com") == "auth0|da3f7d07e42942258b21d29d"
