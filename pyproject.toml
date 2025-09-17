@@ -1,0 +1,35 @@
+[project]
+name = "cpsc5210-team2-drawinggame"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Anthony Ngo", email = "anthony.ngoxd@outlook.com" }]
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = [
+    "authlib>=1.6.3",
+    "dotenv>=0.9.9",
+    "flask>=3.1.2",
+    "psycopg2>=2.9.10",
+    "requests>=2.32.5",
+]
+
+[dependency-groups]
+dev = [
+    "colorama",
+    "pytest",
+    "pytest-cov",
+    "mockito",
+    "selenium",
+    "chromedriver-py",
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"

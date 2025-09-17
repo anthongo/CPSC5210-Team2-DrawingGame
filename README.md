@@ -1,4 +1,7 @@
+# Drawing Game
+
 All files are in tests/ or UI_Tests/
+
 - conftest.py: simulate creating a new drawing and submitting it
 - create_drawing.py: simulate creating a new drawing with custom parameters and submitting it
 - test_app.py: test different endpoints and verified behavior
